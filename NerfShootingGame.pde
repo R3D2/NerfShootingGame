@@ -1,44 +1,54 @@
-// TIME
-int time;
-int TRIGGER = 5000; // Time lapse between the next target
-int initSecond;
+// Time & Tick
+int time;                    // Contains the time elapsed since the target has been drawn
+int TRIGGER = 5000;
 
-// POSITION
+// Graphics
+PFont font;
+
+// Move
 float x;
 float y;
 float easing = 0.05;
 
-// TARGET
+// Targets
 int NBROFPOINTS = 5;
-ArrayList<Point> lstPoints = new ArrayList<Point>();
-Point actualPoint = null;
-Point nextPoint = null;
-boolean move = false;
+int ELLIPSE_RAYON = 60;
+ArrayList<Target> lstPoints;
+Target actualPoint = null;
+Target nextPoint = null;
+boolean hit = false;
 
+// DEBUG 
+boolean DEBUG = true;
 
 void setup() {
   size(640,480);
-  background(51,51,51);
+  background(51,141,179);
   smooth(3);
+  font = loadFont("ArialRoundedMTBold-48.vlw");
   
   // Init our time variable
   time = millis();
+  lstPoints = new ArrayList<Target>();
   
   // Create our list of random points
   for(int i = 0; i < NBROFPOINTS; i++)
   {
     int rX = (int)random(50, width);
     int rY = (int)random(50, height);
-    lstPoints.add(new Point(rX,rY));
+    lstPoints.add(new Target(rX,rY));
   }
   
+  // Get the first target
   actualPoint = lstPoints.get(0);
   
-  ellipse(actualPoint.xPosition, actualPoint.yPosition, 66, 66);
+  // Draw the target
+  actualPoint.Draw();
 }
 
 void draw() {
   
+  // If the time elapsed is equal our trigger get a new target
   if(millis() - time >= TRIGGER)
   {
     nextPoint = lstPoints.get((int)random(0,NBROFPOINTS));
@@ -46,27 +56,41 @@ void draw() {
   }
   
   // Draw the background
-  background(51);
+  background(51,141,179);
   
-  // Moving the ellipse
-  float targetX = nextPoint != null ? (float)nextPoint.xPosition : (float)actualPoint.xPosition ;
+  if (hit)
+  {
+    textFont(font, 32);
+    text("HIT !", 10, 120);
+    hit = false;
+  }
+  else
+  {
+    if (DEBUG)
+    {
+      textFont(font, 32);
+      text(mouseX, 10, 50);
+      text(mouseY, 120, 50);
+    }
+  }
+  
+  // Calculating the points of the target
+  float targetX = nextPoint != null ? (float)nextPoint.xPosition : (float)actualPoint.xPosition;
   float dx = targetX - x;
   x += dx * easing;
-  float targetY = nextPoint != null ? (float)nextPoint.yPosition : (float)actualPoint.yPosition ;
+  float targetY = nextPoint != null ? (float)nextPoint.yPosition : (float)actualPoint.yPosition;
   float dy = targetY - y;
   y += dy * easing;
   
-  ellipse(x, y, 66, 66);
+  // Draw the target
+  ellipse(x, y, ELLIPSE_RAYON, ELLIPSE_RAYON);
 }
 
-// Target Class
-class Point {
+void mouseClicked() {
   
-  int xPosition, yPosition;
-  
-  Point (int x, int y) 
+  // If the dart has hit the target
+  if(actualPoint.hit(mouseX,mouseY)) //<>//
   {
-    this.xPosition = x;
-    this.yPosition = y;
+    hit = true;
   }
 }
