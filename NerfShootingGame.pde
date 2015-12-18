@@ -1,5 +1,6 @@
 // TIME
-int count;
+int time;
+int TRIGGER = 5000; // Time lapse between the next target
 int initSecond;
 
 // POSITION
@@ -12,14 +13,16 @@ int NBROFPOINTS = 5;
 ArrayList<Point> lstPoints = new ArrayList<Point>();
 Point actualPoint = null;
 Point nextPoint = null;
-boolean goingToTheNextTarget = false;
+boolean move = false;
 
 
 void setup() {
-  
   size(640,480);
-  background(51);
-  noStroke();
+  background(51,51,51);
+  smooth(3);
+  
+  // Init our time variable
+  time = millis();
   
   // Create our list of random points
   for(int i = 0; i < NBROFPOINTS; i++)
@@ -36,34 +39,24 @@ void setup() {
 
 void draw() {
   
-  // Get the actual second
-  count++;
-  
-  if (count == 250)
+  if(millis() - time >= TRIGGER)
   {
     nextPoint = lstPoints.get((int)random(0,NBROFPOINTS));
-    goingToTheNextTarget = true;
-    count = 0;
+    time = millis();
   }
   
-  if (goingToTheNextTarget)
-  {
-    background(51);
-    float targetX = (float)nextPoint.xPosition;
-    float dx = targetX - nextPoint.xPosition;
-    nextPoint.xPosition += dx * easing;
+  // Draw the background
+  background(51);
   
-    float targetY = (float)actualPoint.yPosition;
-    float dy = targetY - nextPoint.yPosition;
-    nextPoint.yPosition += dy * easing;
-    
-    ellipse(nextPoint.xPosition, nextPoint.yPosition, 66, 66);
-    
-    if((targetX == actualPoint.xPosition) && (targetY == actualPoint.yPosition))
-    {
-      goingToTheNextTarget = false;
-    }
-  }
+  // Moving the ellipse
+  float targetX = nextPoint != null ? (float)nextPoint.xPosition : (float)actualPoint.xPosition ;
+  float dx = targetX - x;
+  x += dx * easing;
+  float targetY = nextPoint != null ? (float)nextPoint.yPosition : (float)actualPoint.yPosition ;
+  float dy = targetY - y;
+  y += dy * easing;
+  
+  ellipse(x, y, 66, 66);
 }
 
 // Target Class
@@ -75,28 +68,5 @@ class Point {
   {
     this.xPosition = x;
     this.yPosition = y;
-  }
-}
-
-class Target {
-  
-  int actualTarget, nbrOfTarget;
-  
-  Target (int idFirstTarget, int nbrOfTarget)
-  {
-    this.actualTarget = idFirstTarget;
-    this.nbrOfTarget = nbrOfTarget;
-  }
-  
-  void moveTarget()
-  {
-    if (this.actualTarget == this.nbrOfTarget)
-    {
-      this.actualTarget = 0;
-    }
-    else
-    {
-      this.actualTarget += 1;
-    }
   }
 }
