@@ -1,5 +1,5 @@
 // TIME
-int actSecond;
+int count;
 int initSecond;
 
 // POSITION
@@ -8,49 +8,61 @@ float y;
 float easing = 0.05;
 
 // TARGET
-int NUMBEROFPOINTS = 5;
+int NBROFPOINTS = 5;
 ArrayList<Point> lstPoints = new ArrayList<Point>();
+Point actualPoint = null;
+Point nextPoint = null;
+boolean goingToTheNextTarget = false;
 
 
 void setup() {
+  
   size(640,480);
   background(51);
   noStroke();
   
   // Create our list of random points
-  for(int i = 0; i < NUMBEROFPOINTS; i++)
+  for(int i = 0; i < NBROFPOINTS; i++)
   {
     int rX = (int)random(50, width);
     int rY = (int)random(50, height);
     lstPoints.add(new Point(rX,rY));
   }
   
-  Point p = lstPoints.get(0);
+  actualPoint = lstPoints.get(0);
   
-  ellipse(p.xPosition, p.yPosition, 66, 66); //<>//
+  ellipse(actualPoint.xPosition, actualPoint.yPosition, 66, 66);
 }
 
 void draw() {
   
   // Get the actual second
-  actSecond = second();
+  count++;
   
-  //
-  Point p = null;
-  
-  if (initSecond - actSecond >= 10)
+  if (count == 250)
   {
-    p = lstPoints.get((int)random(0,NUMBEROFPOINTS));
-    initSecond = actSecond;
-    
-    float targetX = (float)p.xPosition;
-    float dx = targetX - x;
-    x += dx * easing;
+    nextPoint = lstPoints.get((int)random(0,NBROFPOINTS));
+    goingToTheNextTarget = true;
+    count = 0;
+  }
   
-    float targetY = (float)p.yPosition;
-    float dy = targetY - y;
-    y += dy * easing;
-    ellipse(x, y, 66, 66);
+  if (goingToTheNextTarget)
+  {
+    background(51);
+    float targetX = (float)nextPoint.xPosition;
+    float dx = targetX - nextPoint.xPosition;
+    nextPoint.xPosition += dx * easing;
+  
+    float targetY = (float)actualPoint.yPosition;
+    float dy = targetY - nextPoint.yPosition;
+    nextPoint.yPosition += dy * easing;
+    
+    ellipse(nextPoint.xPosition, nextPoint.yPosition, 66, 66);
+    
+    if((targetX == actualPoint.xPosition) && (targetY == actualPoint.yPosition))
+    {
+      goingToTheNextTarget = false;
+    }
   }
 }
 
