@@ -1,9 +1,13 @@
+
+// Game Parameters
+Game game = new Game();
+
 // Time & Tick
 int time;                    // Contains the time elapsed since the target has been drawn
 int TRIGGER = 2000;
 
-// Graphics
-PFont font;
+// GameState
+int gameState = 0; // 0 - Start screen, 1 - Game
 
 // Move
 float x;
@@ -21,10 +25,7 @@ boolean hit = false;
 boolean DEBUG = true;
 
 void setup() {
-  size(640,480);
-  background(51,141,179);
-  smooth(3);
-  font = loadFont("ArialRoundedMTBold-48.vlw");
+  size(640,480,P3D);
   
   // Init our time variable
   time = millis();
@@ -40,52 +41,62 @@ void setup() {
   
   // Get the first target
   target = lstTargets.get(0);
-  
-  // Draw the target
-  target.Draw();
 }
 
 void draw() {
   
-  // If the time elapsed is equal our trigger get a new target
-  if(millis() - time >= TRIGGER)
-  {
-    target = lstTargets.get((int)random(0,NBROFPOINTS));
-    time = millis();
+  switch(gameState) {
+    
+    // START SCREEN
+    case(0):
+      textFont(game.getGameFont(48),48);
+      text("NerfShooter !",width/2,height/2);
+      textFont(game.getGameFont(24),24);
+      text("Click to start...",10,height-10);
+      break;
+      
+    // GAME
+    case(1):
+      
+      // If the time elapsed is equal our trigger get a new target
+      if(millis() - time >= TRIGGER)
+      {
+        target = lstTargets.get((int)random(0,NBROFPOINTS));
+        time = millis();
+      }
+      
+      // Draw the background
+      background(game.getBackgroundColor());
+      
+      if (hit)
+      {
+        textFont(game.getGameFont(24), 24);
+        text("HIT !", 10, 120);
+        hit = false;
+      }
+      
+      // Calculating the points of the target
+      float targetX = target.xPosition;
+      float dx = targetX - x;
+      x += dx * easing;
+      float targetY = target.yPosition;
+      float dy = targetY - y;
+      y += dy * easing;
+      
+      // Draw the target
+      fill(54);
+      noStroke();
+      ellipse(x, y, ELLIPSE_RAYON, ELLIPSE_RAYON);
+      break;
   }
-  
-  // Draw the background
-  background(51,141,179);
-  
-  if (hit)
-  {
-    textFont(font, 32);
-    text("HIT !", 10, 120);
-    hit = false;
-  }
-  else
-  {
-    if (DEBUG)
-    {
-      textFont(font, 32);
-      text(mouseX, 10, 50);
-      text(mouseY, 120, 50);
-    }
-  }
-  
-  // Calculating the points of the target
-  float targetX = target.xPosition;
-  float dx = targetX - x;
-  x += dx * easing;
-  float targetY = target.yPosition;
-  float dy = targetY - y;
-  y += dy * easing;
-  
-  // Draw the target
-  ellipse(x, y, ELLIPSE_RAYON, ELLIPSE_RAYON);
 }
 
 void mouseClicked() {
+  
+  if(gameState == 0)
+  {
+    gameState = 1;
+  }
   
   // If the dart has hit the target
   if(target.hasBeenHit(mouseX,mouseY))

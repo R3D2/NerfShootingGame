@@ -16,6 +16,8 @@ class Target {
  
   void Draw()
   {
+    fill(54);
+    noStroke();
     ellipse(this.xPosition, this.yPosition, ELLIPSE_RAYON, ELLIPSE_RAYON);
   }
   
