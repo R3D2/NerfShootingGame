@@ -1,6 +1,6 @@
 // Time & Tick
 int time;                    // Contains the time elapsed since the target has been drawn
-int TRIGGER = 5000;
+int TRIGGER = 2000;
 
 // Graphics
 PFont font;
@@ -14,8 +14,7 @@ float easing = 0.05;
 int NBROFPOINTS = 5;
 int ELLIPSE_RAYON = 60;
 ArrayList<Target> lstTargets;
-Target actualTarget = null;
-Target nextTarget = null;
+Target target = null;
 boolean hit = false;
 
 // DEBUG 
@@ -40,10 +39,10 @@ void setup() {
   }
   
   // Get the first target
-  actualTarget = lstTargets.get(0);
+  target = lstTargets.get(0);
   
   // Draw the target
-  actualTarget.Draw();
+  target.Draw();
 }
 
 void draw() {
@@ -51,7 +50,7 @@ void draw() {
   // If the time elapsed is equal our trigger get a new target
   if(millis() - time >= TRIGGER)
   {
-    nextTarget = lstTargets.get((int)random(0,NBROFPOINTS));
+    target = lstTargets.get((int)random(0,NBROFPOINTS));
     time = millis();
   }
   
@@ -75,10 +74,10 @@ void draw() {
   }
   
   // Calculating the points of the target
-  float targetX = nextTarget != null ? (float)nextTarget.xPosition : (float)actualTarget.xPosition;
+  float targetX = target.xPosition;
   float dx = targetX - x;
   x += dx * easing;
-  float targetY = nextTarget != null ? (float)nextTarget.yPosition : (float)actualTarget.yPosition;
+  float targetY = target.yPosition;
   float dy = targetY - y;
   y += dy * easing;
   
@@ -89,7 +88,7 @@ void draw() {
 void mouseClicked() {
   
   // If the dart has hit the target
-  if(actualTarget.hasBeenHit(mouseX,mouseY))
+  if(target.hasBeenHit(mouseX,mouseY))
   {
     hit = true;
   }

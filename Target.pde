@@ -26,7 +26,7 @@ class Target {
     // Check if the dart has hit our target
     if ((xDartPosition < this.rightBorder) && (xDartPosition > this.leftBorder))
     {
-      if ((yDartPosition < this.topBorder) && (yDartPosition > this.bottomBorder))
+      if ((yDartPosition > this.topBorder) && (yDartPosition < this.bottomBorder))
       {
         hit = true;
       }
