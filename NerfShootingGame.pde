@@ -13,9 +13,9 @@ float easing = 0.05;
 // Targets
 int NBROFPOINTS = 5;
 int ELLIPSE_RAYON = 60;
-ArrayList<Target> lstPoints;
-Target actualPoint = null;
-Target nextPoint = null;
+ArrayList<Target> lstTargets;
+Target actualTarget = null;
+Target nextTarget = null;
 boolean hit = false;
 
 // DEBUG 
@@ -29,21 +29,21 @@ void setup() {
   
   // Init our time variable
   time = millis();
-  lstPoints = new ArrayList<Target>();
+  lstTargets = new ArrayList<Target>();
   
   // Create our list of random points
   for(int i = 0; i < NBROFPOINTS; i++)
   {
     int rX = (int)random(50, width);
     int rY = (int)random(50, height);
-    lstPoints.add(new Target(rX,rY));
+    lstTargets.add(new Target(rX,rY));
   }
   
   // Get the first target
-  actualPoint = lstPoints.get(0);
+  actualTarget = lstTargets.get(0);
   
   // Draw the target
-  actualPoint.Draw();
+  actualTarget.Draw();
 }
 
 void draw() {
@@ -51,7 +51,7 @@ void draw() {
   // If the time elapsed is equal our trigger get a new target
   if(millis() - time >= TRIGGER)
   {
-    nextPoint = lstPoints.get((int)random(0,NBROFPOINTS));
+    nextTarget = lstTargets.get((int)random(0,NBROFPOINTS));
     time = millis();
   }
   
@@ -75,10 +75,10 @@ void draw() {
   }
   
   // Calculating the points of the target
-  float targetX = nextPoint != null ? (float)nextPoint.xPosition : (float)actualPoint.xPosition;
+  float targetX = nextTarget != null ? (float)nextTarget.xPosition : (float)actualTarget.xPosition;
   float dx = targetX - x;
   x += dx * easing;
-  float targetY = nextPoint != null ? (float)nextPoint.yPosition : (float)actualPoint.yPosition;
+  float targetY = nextTarget != null ? (float)nextTarget.yPosition : (float)actualTarget.yPosition;
   float dy = targetY - y;
   y += dy * easing;
   
@@ -89,7 +89,7 @@ void draw() {
 void mouseClicked() {
   
   // If the dart has hit the target
-  if(actualPoint.hit(mouseX,mouseY)) //<>//
+  if(actualTarget.hasBeenHit(mouseX,mouseY))
   {
     hit = true;
   }
