@@ -1,4 +1,3 @@
-
 // Game Parameters
 Game game = new Game();
 
