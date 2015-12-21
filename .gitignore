@@ -1,0 +1,7 @@
+#################
+## Processing
+#################
+
+*.tmp
+/application.windows64/*
+/application.windows32/*

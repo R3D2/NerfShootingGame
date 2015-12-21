@@ -3,6 +3,7 @@ class Game {
   // Properties
   int backgroundColor;
   int targetColor;
+  int timer;
   
   Game()
   {
@@ -13,6 +14,11 @@ class Game {
   int getTargetColor()
   {
     return this.targetColor;
+  }
+  
+  int getTimer()
+  {
+    return this.timer;
   }
   
   int getBackgroundColor()
